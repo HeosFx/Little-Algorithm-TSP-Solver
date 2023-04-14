@@ -2,7 +2,7 @@
  * Projec : gtsp (voyageur de commerce)
  *
  * Date   : 07/04/2014
- * Author : Olivier Grunder
+ * Author : Olivier Grunder, Flavian Theurel
  */
 
 #include <stdio.h>
