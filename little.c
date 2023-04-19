@@ -172,28 +172,10 @@ void build_solution() {
     return;
 }
 
-void min_col_dbl(double matrix[NBR_TOWNS][NBR_TOWNS], double *min) {
-    for (int i = 0; i < NBR_TOWNS; ++i) {
-        for (int j = 0; j < NBR_TOWNS; ++j) {
-            if (matrix[j][i] < min[i])
-                min[i] = matrix[j][i];
-        }
-    }
-}
-
-void min_row_dbl(double matrix[NBR_TOWNS][NBR_TOWNS], double *min) {
-    for (int i = 0; i < NBR_TOWNS; ++i) {
-        for (int j = 0; j < NBR_TOWNS; ++j) {
-            if (matrix[i][j] < min[i])
-                min[i] = matrix[i][j];
-        }
-    }
-}
-
 /*
  * Delete sub-tours by computing the circuits present in the iteration
  */
-void subtour_elimination(double matrix[NBR_TOWNS][NBR_TOWNS], int iteration){
+void subtour_elimination(double matrix[NBR_TOWNS][NBR_TOWNS], int iteration) {
     for (int i = 0; i <= iteration; ++i) {
         /*
          * Initialize the circuit starting and ending points
@@ -210,7 +192,7 @@ void subtour_elimination(double matrix[NBR_TOWNS][NBR_TOWNS], int iteration){
          * Check if there is at least 1 sub-tour starting in a specific city
          * while : allows to several times to complete the circuit
          */
-        while (iter <= iteration && travel_found){
+        while (iter <= iteration && travel_found) {
             for (int j = 0; j <= iteration; ++j) {
                 travel_found = 0; // We suppose that the city is the last one of the circuit
                 if (starting_town[j] == end_circuit) { // If the city is in the middle of the circuit
@@ -219,7 +201,7 @@ void subtour_elimination(double matrix[NBR_TOWNS][NBR_TOWNS], int iteration){
                 }
             }
 
-            if(travel_found){
+            if (travel_found) {
                 matrix[end_circuit][start_circuit] = -1;
             }
             iter++;
@@ -292,29 +274,6 @@ void little_algorithm(double d0[NBR_TOWNS][NBR_TOWNS], int iteration, double eva
      *  If no zero in the matrix, then return, solution infeasible
      */
 
-
-
-    /*
-    min_row_dbl(d, min_row);
-    min_col_dbl(d, min_col);
-
-    double penalties[NBR_TOWNS][NBR_TOWNS];
-    for (int i = 0; i < NBR_TOWNS; ++i) {
-        for (int j = 0; j < NBR_TOWNS; ++j) {
-            if (d[i][j] == 0) {
-                if (min_row[i] + min_col[j] < 0) {
-                    penalties[i][j] = INF;
-                } else {
-                    penalties[i][j] = min_row[i] + min_col[j];
-                }
-            } else {
-                penalties[i][j] = -INF; // If the matrix value isn't 0 then penalty is -INF
-            }
-        }
-    }
-
-     */
-
     /* row and column of the zero with the max penalty */
     int izero = -1, jzero = -1;
     double max_penalty = 0;
@@ -324,22 +283,13 @@ void little_algorithm(double d0[NBR_TOWNS][NBR_TOWNS], int iteration, double eva
      *  starting_town and ending_town
      */
 
-
-    /*for (int i = 0; i < NBR_TOWNS; ++i) {
-        for (int j = 0; j < NBR_TOWNS; ++j) {
-            if (penalties[i][j] > max_penalty) {
-                izero = i;
-                jzero = j;
-                max_penalty = penalties[i][j];
-            }
-        }
-    }*/
     for (int i = 0; i < NBR_TOWNS; ++i) {
         for (int j = 0; j < NBR_TOWNS; ++j) {
             /* Check penalty only if it's a 0 */
             if (d[i][j] == 0) {
                 double penalty_row = INF, penalty_col = INF;
                 double selected_row = 0, selected_col = 0;
+                /* Compute the penalty for a zero */
                 for (int k = 0; k < NBR_TOWNS; ++k) {
                     /* Select the lowest value in the j column */
                     if (k != i && d[k][j] < penalty_row && d[k][j] >= 0) {
