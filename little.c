@@ -1,5 +1,5 @@
 /**
- * Projec : gtsp (voyageur de commerce)
+ * Project : gtsp (voyageur de commerce)
  *
  * Date   : 07/04/2014
  * Author : Olivier Grunder, Flavian Theurel
@@ -9,8 +9,9 @@
 #include <stdlib.h>
 #include <math.h>
 #include <string.h>
+#include <time.h>
 
-#define NBR_TOWNS 10
+#define NBR_TOWNS 25
 #define INF 99999999999999
 
 /* Distance matrix */
@@ -32,16 +33,31 @@ double best_eval = -1.0;
  */
 float coord[NBR_TOWNS][2] =
         {
-                {565.0, 575.0},
-                {25.0,  185.0},
-                {345.0, 750.0},
-                {945.0, 685.0},
-                {845.0, 655.0},
-                {880.0, 660.0},
-                {25.0,  230.0},
-                {525.0, 1000.0},
-                {580.0, 1175.0},
-                {650.0, 1130.0}
+                {565.0,  575.0},
+                {25.0,   185.0},
+                {345.0,  750.0},
+                {945.0,  685.0},
+                {845.0,  655.0},
+                {880.0,  660.0},
+                {25.0,   230.0},
+                {525.0,  1000.0},
+                {580.0,  1175.0},
+                {650.0,  1130.0},
+                {1605.0, 620.0},
+                {1220.0, 580.0},
+                {1465.0, 200.0},
+                {1530.0, 5.0},
+                {845.0,  680.0},
+                {725.0,  370.0},
+                {145.0, 665.0},
+                {415.0, 635.0},
+                {510.0, 875.0},
+                {560.0, 365.0},
+                {300.0, 465.0},
+                {520.0, 585.0},
+                {480.0, 415.0},
+                {835.0, 625.0},
+                {975.0, 580.0}
         };
 
 
@@ -190,7 +206,7 @@ void subtour_elimination(double matrix[NBR_TOWNS][NBR_TOWNS], int iteration) {
 
         /*
          * Check if there is at least 1 sub-tour starting in a specific city
-         * while : allows to several times to complete the circuit
+         * while : allows to complete the circuit
          */
         while (iter <= iteration && travel_found) {
             for (int j = 0; j <= iteration; ++j) {
@@ -229,7 +245,6 @@ void little_algorithm(double d0[NBR_TOWNS][NBR_TOWNS], int iteration, double eva
      * substract the min of the rows and the min of the columns
      * and update the evaluation of the current node
      */
-    double changes = 0;
 
     /* Check that there is at least one 0 in each row */
     for (int i = 0; i < NBR_TOWNS; i++) {
@@ -341,6 +356,9 @@ void little_algorithm(double d0[NBR_TOWNS][NBR_TOWNS], int iteration, double eva
         d2[i][ending_town[iteration]] = -1;
     }
 
+    /*
+     * Delete the possible sub-circuits
+     */
     subtour_elimination(d2, iteration);
 
     /* Explore left child node according to given choice */
@@ -365,6 +383,8 @@ void little_algorithm(double d0[NBR_TOWNS][NBR_TOWNS], int iteration, double eva
  *
  */
 int main(int argc, char *argv[]) {
+
+    clock_t start = clock();
 
     best_eval = -1;
 
@@ -405,9 +425,10 @@ int main(int argc, char *argv[]) {
     printf("Best solution:");
     print_solution(best_solution, best_eval);
 
+    clock_t end = clock();
 
-    printf("Hit RETURN!\n");
-    getchar();
+    double execution_time = ((double) (end - start)) / CLOCKS_PER_SEC;
+    printf("\nExecution time : %f sec\n", execution_time);
 
     return 0;
 }
