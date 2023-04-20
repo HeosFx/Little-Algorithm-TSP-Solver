@@ -33,16 +33,16 @@ double best_eval = -1.0;
  */
 float coord[NBR_TOWNS][2] =
         {
-                {565.0,  575.0},
-                {25.0,   185.0},
-                {345.0,  750.0},
-                {945.0,  685.0},
-                {845.0,  655.0},
-                {880.0,  660.0},
-                {25.0,   230.0},
-                {525.0,  1000.0},
-                {580.0,  1175.0},
-                {650.0,  1130.0},
+                {565.0, 575.0},
+                {25.0,  185.0},
+                {345.0, 750.0},
+                {945.0, 685.0},
+                {845.0, 655.0},
+                {880.0, 660.0},
+                {25.0,  230.0},
+                {525.0, 1000.0},
+                {580.0, 1175.0},
+                {650.0, 1130.0},
                 /*{1605.0, 620.0},
                 {1220.0, 580.0},
                 {1465.0, 200.0},
@@ -215,6 +215,43 @@ void build_solution() {
     return;
 }
 
+/*
+ * Delete sub-tours by computing the circuits present in the iteration
+ */
+void subtour_elimination(double matrix[NBR_TOWNS][NBR_TOWNS], int iteration) {
+    for (int i = 0; i <= iteration; ++i) {
+        /*
+         * Initialize the circuit starting and ending points
+         * We suppose that in the initial state a circuit is composed of a single city
+         */
+        int start_circuit = starting_town[i];
+        int end_circuit = starting_town[i];
+
+        /* Is a sub-tour found ? */
+        int travel_found = 1;
+        int iter = 0;
+
+        /*
+         * Check if there is at least 1 sub-tour starting in a specific city
+         * while : allows to complete the circuit
+         */
+        while (iter <= iteration && travel_found) {
+            for (int j = 0; j <= iteration; ++j) {
+                travel_found = 0; // We suppose that the city is the last one of the circuit
+                if (starting_town[j] == end_circuit) { // If the city is in the middle of the circuit
+                    travel_found = 1;
+                    end_circuit = ending_town[j];
+                }
+            }
+
+            if (travel_found) {
+                matrix[end_circuit][start_circuit] = -1;
+            }
+            iter++;
+        }
+    }
+}
+
 /**
  *  Little Algorithm
  */
@@ -343,6 +380,11 @@ void little_algorithm(double d0[NBR_TOWNS][NBR_TOWNS], int iteration, double eva
         d2[starting_town[iteration]][i] = -1;
         d2[i][ending_town[iteration]] = -1;
     }
+
+    /*
+     * Delete the possible sub-circuits
+     */
+    subtour_elimination(d2, iteration);
 
     /* Explore left child node according to given choice */
     little_algorithm(d2, iteration + 1, eval_node_child);
